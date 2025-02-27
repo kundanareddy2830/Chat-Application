@@ -1,6 +1,6 @@
 # Chat Application 🚀
 
-A simple, interactive chat application built with HTML, CSS, and JavaScript.
+A simple, interactive chat application built with HTML, CSS.
 
 ## Features
 ✅ Sidebar with navigation  
@@ -11,7 +11,7 @@ A simple, interactive chat application built with HTML, CSS, and JavaScript.
 ✅ Responsive design  
 
 ## Technologies Used
-- HTML5, CSS3, JavaScript
+- HTML5, CSS3
 - FontAwesome Icons
 
 Objective
