@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            height: 100vh;
+            margin: 0;
+            background: #f4f7fc;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background: #2b3e50; /* New Sidebar Color */
+            color: white;
+            position: fixed;
+            height: 100%;
+            transition: 0.3s;
+            padding-top: 50px;
+            z-index: 1000;
+            left: -250px;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            padding: 10px;
+            font-weight: bold;
+            background: #f39c12; /* Unique Color for Logo */
+            color: white;
+            border-radius: 5px;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            padding: 15px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .sidebar ul li i {
+            margin-right: 10px;
+        }
+
+        .sidebar .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 24px;
+            color: white;
+        }
+
+        /* Chat and Main Area */
+        .main-container {
+            margin-left: 250px;
+            padding: 20px;
+            width: 100%;
+            background-color: #f4f7fc;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px;
+        }
+
+        .menu-btn {
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .chat-container {
+            background: #fff;
+            width: 100%;
+            height: 85vh;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column-reverse;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+        }
+
+        .message {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 10px;
+            font-size: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+            position: relative;
+        }
+
+        .sent {
+            background-color: #3498db;
+            color: white;
+            align-self: flex-end;
+            border-radius: 15px 15px 0 15px;
+        }
+
+        .received {
+            background-color: #e6e6e6;
+            color: #333;
+            align-self: flex-start;
+            border-radius: 15px 15px 15px 0;
+        }
+
+        .timestamp {
+            font-size: 10px;
+            color: #555;
+            position: absolute;
+            bottom: -15px;
+            right: 5px;
+        }
+
+        .input-container {
+            display: flex;
+            padding-top: 10px;
+        }
+
+        .input-container input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .input-container button {
+            padding: 10px;
+            border: none;
+            background-color: #ad9c7f;
+            color: white;
+            border-radius: 10px;
+            margin-left: 5px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .input-container button:hover {
+            background-color: #e67e22;
+        }
+
+        .typing {
+            font-size: 13px;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        /* Dark Mode */
+        .dark-mode {
+            background: #2c3e50;
+            color: white;
+        }
+
+        /* Responsive Sidebar */
+        @media screen and (max-width: 768px) {
+            .sidebar {
+                width: 0;
+            }
+
+            .main-container {
+                margin-left: 0;
+            }
+
+            .sidebar.open {
+                width: 250px;
+            }
+        }
+
+        #ul li:hover{
+            box-shadow: 0 0 8px white;
+
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            CHATME
+            <span class="close-btn" onclick="closeSidebar()">×</span>
+        </div>
+        <ul id="ul">
+            <li><i class="fas fa-comments"></i> Chat</li>
+            <li><i class="fas fa-user-circle"></i> Profile</li>
+            <li><i class="fas fa-video"></i> Video Call</li>
+            <li><i class="fas fa-cogs"></i> Settings</li>
+        </ul>
+    </div>
+
+    <!-- Main Chat Area -->
+    <div class="main-container">
+        <div class="header">
+            <span class="menu-btn" onclick="openSidebar()">☰</span> Chat Application
+        </div>
+
+        <div class="chat-container">
+            <div class="messages" id="messages"></div>
+            <div class="typing" id="typingIndicator"></div>
+            <div class="input-container">
+                <input type="text" id="messageInput" placeholder="Type a message...">
+                <button onclick="sendMessage()">Send</button>
+                <button onclick="addEmoji()">😊</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openSidebar() {
+            document.getElementById('sidebar').classList.add('open');
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+        }
+
+        const messagesDiv = document.getElementById("messages");
+        const messageInput = document.getElementById("messageInput");
+        const typingIndicator = document.getElementById("typingIndicator");
+
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (message) {
+                displayMessage(message, "sent", "You");
+                messageInput.value = "";
+                setTimeout(() => {
+                    receiveMessage();
+                    typingIndicator.textContent = "";
+                }, 1000);
+            }
+        }
+
+        function receiveMessage() {
+            const botReplies = ["Hello! 😊", "How can I help?", "That's interesting!", "Let's talk AI 🤖"];
+            const randomReply = botReplies[Math.floor(Math.random() * botReplies.length)];
+            displayMessage(randomReply, "received", "Bot");
+        }
+
+        function displayMessage(message, type, sender) {
+            const messageElement = document.createElement("div");
+            messageElement.textContent = sender + ": " + message;
+            messageElement.classList.add("message", type);
+            messagesDiv.prepend(messageElement);
+        }
+
+        function addEmoji() {
+            messageInput.value += " 😊";
+            messageInput.focus();
+        }
+    </script>
+</body>
+</html>  
